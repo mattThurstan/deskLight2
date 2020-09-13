@@ -1,8 +1,8 @@
 /*----------------------------messages - publish-----------------------*/
 void meshSendSingleToBridge(String nom, String msg, bool save) {
-  if (DEBUG_COMMS) { Serial.print(nom); Serial.print(" - "); }
+  if (DEBUG_COMMS && Serial) { Serial.print(nom); Serial.print(" - "); }
   mesh.sendSingle(id_bridge1, msg);
-  if (DEBUG_COMMS) { Serial.println(msg); }
+  if (DEBUG_COMMS && Serial) { Serial.println(msg); }
   if (save == true) { _shouldSaveSettings = true; }
 }
 void publishMeshMsgSingleState(String nom, String addr, boolean state, bool save) {
@@ -65,7 +65,7 @@ void publishDebugCommsState(bool save) {
 
 void publishStatusAll(bool save) {
   
-  if (DEBUG_COMMS) { Serial.println("publishStatusAll "); }
+  if (DEBUG_COMMS && Serial) { Serial.println("publishStatusAll "); }
   publishState(save);
   publishMode(save);
   publishColorTemp(save);

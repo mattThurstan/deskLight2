@@ -176,5 +176,5 @@ void receiveMessage(uint32_t from, String msg)
   }
   else if(targetSub == "status/request") { if (msgSub == ON) { publishStatusAll(false); }  }
   
-  if (DEBUG_COMMS) { Serial.print(targetSub); Serial.print(" : "); Serial.println(msgSub); }
+  if (DEBUG_COMMS && Serial) { Serial.print(targetSub); Serial.print(" : "); Serial.println(msgSub); }
 }

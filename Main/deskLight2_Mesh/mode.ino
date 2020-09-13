@@ -69,17 +69,15 @@ void mode3() { /* day */
 }
 
 void mode4() { /* working */ 
-  for (int i = ledSegment[1].first; i <= ledSegment[3].last; i++) {
-    if(_colorTempCur == 0) {
+  if(_colorTempCur == 0) {
     //strip.SetPixelColor(i, _warmFluorescent);
-    strip.ClearTo(_rgbWarmFluorescent, ledSegment[1].first, ledSegment[2].last); 
+    strip.ClearTo(_rgbWarmFluorescent, ledSegment[1].first, ledSegment[1].last); 
   } else if(_colorTempCur == 1) {
     //strip.SetPixelColor(i, _standardFluorescent);
-    strip.ClearTo(_rgbStandardFluorescent, ledSegment[1].first, ledSegment[2].last); 
+    strip.ClearTo(_rgbStandardFluorescent, ledSegment[1].first, ledSegment[1].last); 
   } else if(_colorTempCur == 2) {
     //strip.SetPixelColor(i, _coolWhiteFluorescent);
-    strip.ClearTo(_rgbCoolWhiteFluorescent, ledSegment[1].first, ledSegment[2].last); 
-  }
+    strip.ClearTo(_rgbCoolWhiteFluorescent, ledSegment[1].first, ledSegment[1].last); 
   }
 }
 

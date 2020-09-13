@@ -14,18 +14,18 @@ void deviceRestart() {
 void deviceShutdown() { /* ??? */ }
 
 void turnOffWifi() {
-  if (DEBUG_GEN) { Serial.println("Disconnecting..."); }
+  if (DEBUG_GEN && Serial) { Serial.println("Disconnecting..."); }
   WiFi.disconnect();
 }
 
 void turnOffMesh() {
-  if (DEBUG_GEN) { Serial.println("Disconnecting mesh..."); }
+  if (DEBUG_GEN && Serial) { Serial.println("Disconnecting mesh..."); }
   mesh.stop();
 }
 
 void turnOffSerial() {
-  if (DEBUG_GEN) { Serial.println("Disconnecting serial..."); }
-  //
+  if (DEBUG_GEN && Serial) { Serial.println("Disconnecting serial..."); }
+  Serial.end();
 }
 
 

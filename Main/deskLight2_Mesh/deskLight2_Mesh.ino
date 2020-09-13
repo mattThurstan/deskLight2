@@ -34,7 +34,7 @@
 
 /*----------------------------system----------------------------*/
 const String _progName = "deskLight2_Mesh";
-const String _progVers = "0.301";                 // tweaks
+const String _progVers = "0.302";                 // touch bt
 
 uint8_t LOCKDOWN_SEVERITY = 0;                    // the severity of the lockdown
 bool LOCKDOWN = false;                            // are we in lockdown?
@@ -62,6 +62,9 @@ bool _isBreathingSynced = false;                  // breath sync local or global
 // NeoPixelBrightnessBus - For Esp8266, only one Pin and it uses GPIO3 (RX) due to DMA hardware use. 
 //const byte _fan0Pin = 1;
 //const byte _fan1Pin = ;
+const byte _bt0Pin = 16;                          // BT to D0 (GPIO16) with external 10K pullup / touch bt is active low
+//const byte _bt0Pin = 0; ???
+//const byte _bt1Pin = 2; ???
 
 /*----------------------------modes----------------------------*/
 const int _modeNum = 9;                           // ???
@@ -79,10 +82,13 @@ const String _colorTempName[_colorTempNum] = { "Warm", "Standard", "CoolWhite" }
 //..mabye, but would really like touch due to hardware positioning
 
 /*----------------------------touch sensors----------------------------*/
-//..have to go for touch IC's rather than than the basic cap sense used elsewhere
+volatile boolean _bt0Lock = false;                // Button lock
+unsigned long _bt0LockSaveTime = 0;               // Save the current time
+long _btLockInterval = 1000;                      // Amount of time to lock the button in milliseconds
+
 
 /*----------------------------LED----------------------------*/
-const uint16_t _ledNum = 31;                      // 1 + 30 LEDs
+const uint16_t _ledNum = 52;                      // 1 + 51 LEDs
 NeoPixelBrightnessBus<NeoGrbFeature, Neo800KbpsMethod> strip(_ledNum);
 
 typedef struct {
@@ -94,7 +100,7 @@ typedef struct {
 const int _segmentTotal = 3;                      // Xm strip with LEDs (3 + 1)
 LED_SEGMENT ledSegment[_segmentTotal] = { 
   { 0, 0, 1 },
-  { 1, 10, 10 }, 
+  { 1, 51, 51 }, 
   { 11, 20, 10 }
 };
 
@@ -142,7 +148,7 @@ painlessMesh  mesh;
 uint32_t id_bridge1 = DEVICE_ID_BRIDGE1;
 
 void receivedCallback(uint32_t from, String &msg ) {
-  if (DEBUG_GEN) { Serial.printf("deskLight2_Mesh: Received from %u msg=%s\n", from, msg.c_str()); }
+  if (DEBUG_GEN && Serial) { Serial.printf("deskLight2_Mesh: Received from %u msg=%s\n", from, msg.c_str()); }
   receiveMessage(from, msg);
 }
 
@@ -154,22 +160,22 @@ void newConnectionCallback(uint32_t nodeId) {
 
   if (DEBUG_MESHSYNC) { }
   
-  if (DEBUG_COMMS) { Serial.printf("--> deskLight2_Mesh: New Connection, nodeId = %u\n", nodeId); }
+  if (DEBUG_COMMS && Serial) { Serial.printf("--> deskLight2_Mesh: New Connection, nodeId = %u\n", nodeId); }
 }
 
 void changedConnectionCallback() {
-  if (DEBUG_COMMS) { Serial.printf("Changed connections %s\n",mesh.subConnectionJson().c_str()); }
+  if (DEBUG_COMMS && Serial) { Serial.printf("Changed connections %s\n",mesh.subConnectionJson().c_str()); }
   //publish..
   publishStatusAll(false);
   if (DEBUG_MESHSYNC) { }
 }
 
 void nodeTimeAdjustedCallback(int32_t offset) {
-  if (DEBUG_COMMS) { Serial.printf("Adjusted time %u. Offset = %d\n", mesh.getNodeTime(),offset); }
+  if (DEBUG_COMMS && Serial) { Serial.printf("Adjusted time %u. Offset = %d\n", mesh.getNodeTime(),offset); }
 }
 
 void delayReceivedCallback(uint32_t from, int32_t delay) {
-  if (DEBUG_COMMS) { Serial.printf("Delay to node %u is %d us\n", from, delay); }
+  if (DEBUG_COMMS && Serial) { Serial.printf("Delay to node %u is %d us\n", from, delay); }
 }
 
 
@@ -200,8 +206,8 @@ void setup() {
   setupLEDs();
   flashLED(0);
   
-  //setupUserInputs();
-  //flashLED(1);
+  setupUserInputs();
+  flashLED(1);
   
   setupMesh();
   flashLED(2);
@@ -228,10 +234,10 @@ void loop() {
   if(_firstTimeSetupDone == false) {
     _firstTimeSetupDone = true;                   
     publishStatusAll(false);
-    if (DEBUG_GEN) { Serial.print(F("firstTimeSetupDone  = true")); }
+    if (DEBUG_GEN && Serial) { Serial.print(F("firstTimeSetupDone  = true")); }
   }
 
-  //loopUserInputs();
+  loopUserInputs();
   loopModes();
   loopBreathing();                                // overlaid on top, ..cos
   gHueRotate();

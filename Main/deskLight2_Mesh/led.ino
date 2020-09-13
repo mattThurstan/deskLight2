@@ -68,7 +68,7 @@ void setColorHSL(RgbColor rgb) {
   _gHue2 = _colorHSL.H;
   //_gHue2saved = _colorHSL.H;
   
-  if (DEBUG_GEN) { 
+  if (DEBUG_GEN && Serial) { 
     Serial.print("setColorHSL - R ");
     Serial.print(rgb.R);
     Serial.print(", G ");
@@ -121,19 +121,19 @@ void flashLED(byte led) {
   if (led == 0) {
     //
   } else if (led == 1) {
-    strip.SetPixelColor(1, _rgbYellow);
+    strip.SetPixelColor(0, _rgbYellow);
   } else if (led == 2) {
-    strip.SetPixelColor(1, _rgbFuchsia);
+    strip.SetPixelColor(0, _rgbFuchsia);
   } else if (led == 3) {
-    strip.SetPixelColor(1, _rgbOrange);
+    strip.SetPixelColor(0, _rgbOrange);
   } else if (led == 4) {
-    strip.SetPixelColor(1, _rgbViolet);
+    strip.SetPixelColor(0, _rgbViolet);
   } else if (led == 5) {
-    strip.SetPixelColor(1, _rgbTeal);
+    strip.SetPixelColor(0, _rgbTeal);
   } else if (led == 6) {
-    strip.SetPixelColor(1, _rgbPink);
+    strip.SetPixelColor(0, _rgbPink);
   } else if (led == 7) {
-    strip.SetPixelColor(1, _rgbGreen);
+    strip.SetPixelColor(0, _rgbGreen);
   }
   strip.Show();
   delay(400);
