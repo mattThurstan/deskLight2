@@ -34,7 +34,7 @@
 
 /*----------------------------system----------------------------*/
 const String _progName = "deskLight2_Mesh";
-const String _progVers = "0.3";                   // update
+const String _progVers = "0.301";                 // tweaks
 
 uint8_t LOCKDOWN_SEVERITY = 0;                    // the severity of the lockdown
 bool LOCKDOWN = false;                            // are we in lockdown?
@@ -47,7 +47,7 @@ boolean DEBUG_COMMS = false;                      // realtime serial debugging o
 boolean DEBUG_USERINPUT = false;                  // realtime serial debugging output - user input
 
 boolean _firstTimeSetupDone = false;              // starts false //this is mainly to catch an interrupt trigger that happens during setup, but is usefull for other things
-//volatile boolean _onOff = true; /    /flip _state // issues with mqtt and init false // this should init false, then get activated by input - on/off true/false
+volatile boolean _onOff = true; //flip _state // issues with mqtt and init false // this should init false, then get activated by input - on/off true/false
 //bool _dayMode = false;                            // whether or not to run if night or day. default to night just so it works in case something goes wrong.
 bool _shouldSaveSettings = false;                 // flag for saving data
 bool _runonce = true;                             // flag for sending states when first mesh conection
@@ -69,11 +69,11 @@ const int _modePresetSlotNum = 7;
 int _modePreset[_modePresetSlotNum] = { 0, 2, 3, 4, 5, 7, 8 }; // test basic, tap bt to cycle around a few mode slots   //expand to array or struct later for more presets
 volatile int _modeCur = 4;                        // current mode in use
 int _modePresetSlotCur = 3;                       // the current array pos (slot) in the current preset, as opposed to..      //+/- by userInput
-String modeName[_modeNum] = { "Glow", "Sunrise", "Morning", "Day", "Working", "Evening", "Sunset", "Night", "Effect" };
+const String _modeName[_modeNum] = { "Glow", "Sunrise", "Morning", "Day", "Working", "Evening", "Sunset", "Night", "Effect" };
 
 const int _colorTempNum = 3;                      // 3 color temperature sub-modes for now
 int _colorTempCur = 1;                            // current colour temperature
-String colorTempName[_colorTempNum] = { "Warm", "Standard", "CoolWhite" }; // color temperature sub-mode names for the main "Working" mode.
+const String _colorTempName[_colorTempNum] = { "Warm", "Standard", "CoolWhite" }; // color temperature sub-mode names for the main "Working" mode.
 
 /*----------------------------buttons----------------------------*/
 //..mabye, but would really like touch due to hardware positioning
@@ -139,7 +139,7 @@ RgbColor _rgbCoolWhiteFluorescent(212, 235, 255); // CoolWhiteFluorescent = 0xD4
 
 /*----------------------------Mesh----------------------------*/
 painlessMesh  mesh;
-uint32_t id = DEVICE_ID_BRIDGE1;
+uint32_t id_bridge1 = DEVICE_ID_BRIDGE1;
 
 void receivedCallback(uint32_t from, String &msg ) {
   if (DEBUG_GEN) { Serial.printf("deskLight2_Mesh: Received from %u msg=%s\n", from, msg.c_str()); }
@@ -160,7 +160,7 @@ void newConnectionCallback(uint32_t nodeId) {
 void changedConnectionCallback() {
   if (DEBUG_COMMS) { Serial.printf("Changed connections %s\n",mesh.subConnectionJson().c_str()); }
   //publish..
-  //publishStatusAll(false);
+  publishStatusAll(false);
   if (DEBUG_MESHSYNC) { }
 }
 
@@ -242,7 +242,7 @@ void loop() {
   EVERY_N_SECONDS(60) {                           // too much ???
     if (_shouldSaveSettings == true)
     { 
-      saveSettings(); 
+      //saveSettings(); 
       _shouldSaveSettings = false; 
     }
   }

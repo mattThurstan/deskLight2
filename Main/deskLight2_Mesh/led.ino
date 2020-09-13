@@ -220,5 +220,5 @@ void showSegmentEndpoints() {
  This sets the first LED to show the current colour temperature
  */
 void showColorTempPx() {
-  strip.SetPixelColor(ledSegment[3].last, _rgbColorTempCur);
+  //strip.SetPixelColor(ledSegment[3].last, _rgbColorTempCur);
 }

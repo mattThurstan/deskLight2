@@ -13,10 +13,9 @@ void receiveMessage(uint32_t from, String msg)
     else if (msgSub == LIGHTS_OFF) { _onOff = false; }
     publishState(true);
   } 
-
   else if (targetSub == "lights/mode") 
   {
-    else if (msgSub == "Glow") 
+    if (msgSub == "Glow") 
     { _modeCur = 0;
       _modePresetSlotCur = 0; }
     else if (msgSub == "Morning") 
@@ -26,7 +25,7 @@ void receiveMessage(uint32_t from, String msg)
     { _modeCur = 3;
       _modePresetSlotCur = 2; }
     else if (msgSub == "Working") 
-    { _mdeCur = 4;
+    { _modeCur = 4;
       _modePresetSlotCur = 3; }
     else if (msgSub == "Evening") 
     { _modeCur = 5;
@@ -36,7 +35,6 @@ void receiveMessage(uint32_t from, String msg)
       _modePresetSlotCur = 5; }
     else if (msgSub == "Effect") 
     { _modeCur = 8; }
-
 //    publishMode(true);                   // bouncing back really badly!!!!
   }
   else if (targetSub == "lights/mode/coltemp") {
@@ -66,8 +64,8 @@ void receiveMessage(uint32_t from, String msg)
     uint8_t hueCycleLoopTime = msgSub.toInt();
     if (hueCycleLoopTime < 0 || hueCycleLoopTime > 255) { return; } 
     else {
-      _GHue2CycleSaved = hueCycleLoopTime;
-      checkAndSetTopGHue2CycleMillis();
+      _gHue2CycleSaved = hueCycleLoopTime;
+      checkAndSetGHue2CycleMillis();
       publishGHue2Cycle(true);
     }
   }
@@ -102,12 +100,12 @@ void receiveMessage(uint32_t from, String msg)
     // trigger only (global synced)
     // note: the single mesh msg of 'breath' is used for synced global breathing
     if (msgSub == LIGHTS_ON) {
-      _topIsBreathingSynced = true;                    // set sync to global
-      _topIsBreathing = true;                          // start synced breathing
+      _isBreathingSynced = true;                    // set sync to global
+      _isBreathing = true;                          // start synced breathing
     }
     else if (msgSub == LIGHTS_OFF) {
-      _topIsBreathing = false;                         // stop breathing
-      _topIsBreathingSynced = false;                   // set sync to local
+      _isBreathing = false;                         // stop breathing
+      _isBreathingSynced = false;                   // set sync to local
     }
     //publishTopBreath(false);
   }
